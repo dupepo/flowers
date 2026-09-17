@@ -4,243 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shop</title>
-<style>
-  :root {
-    --bg: #fdfcf9;
-    --ink: #1f1c19;
-    --accent: #2c5f4f;
-    --accent-dark: #1e4237;
-    --line: #e4ded3;
-    --tile-bg: #f2efe7;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #17181a;
-      --ink: #f0ede6;
-      --accent: #6fbfa4;
-      --accent-dark: #8fd4bc;
-      --line: #33342f;
-      --tile-bg: #212320;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #17181a;
-    --ink: #f0ede6;
-    --accent: #6fbfa4;
-    --accent-dark: #8fd4bc;
-    --line: #33342f;
-    --tile-bg: #212320;
-  }
-
-  * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Georgia', 'Iowan Old Style', serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  nav {
-    display: flex;
-    justify-content: center;
-    gap: clamp(24px, 6vw, 64px);
-    padding: 28px 20px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  nav a {
-    color: var(--ink);
-    text-decoration: none;
-    font-size: 1.05rem;
-    letter-spacing: 0.02em;
-    position: relative;
-    padding-bottom: 4px;
-    background: none;
-    border: none;
-    font-family: inherit;
-    cursor: pointer;
-  }
-
-  nav a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.25s ease;
-  }
-
-  nav a:hover::after,
-  nav a:focus-visible::after {
-    transform: scaleX(1);
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-  }
-
-  .view {
-    display: none;
-    width: 100%;
-    max-width: 720px;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 28px;
-    opacity: 0;
-    transform: translateY(14px) scale(0.98);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-  }
-
-  .view.active {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  .view.leaving {
-    opacity: 0;
-    transform: translateY(-14px) scale(0.98);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .view {
-      transition: none;
-      transform: none;
-    }
-  }
-
-  .logo-mark {
-    width: 88px;
-    height: 88px;
-  }
-
-  .logo-mark svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .shop-btn {
-    font-family: inherit;
-    font-size: 1.15rem;
-    background: var(--accent);
-    color: #fdfcf9;
-    border: none;
-    padding: 18px 42px;
-    border-radius: 3px;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-
-  .shop-btn:hover,
-  .shop-btn:focus-visible {
-    background: var(--accent-dark);
-    transform: translateY(-1px);
-  }
-
-  .shop-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-  }
-
-  .categories {
-    display: flex;
-    gap: clamp(16px, 4vw, 32px);
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .cat-card {
-    width: 160px;
-    background: transparent;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 24px 16px 18px;
-    cursor: pointer;
-    font-family: inherit;
-    color: var(--ink);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .cat-card svg {
-    width: 48px;
-    height: 48px;
-    stroke: var(--accent);
-  }
-
-  .cat-card:hover,
-  .cat-card:focus-visible {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-  }
-
-  .cat-card span {
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-  }
-
-  .detail-header h2 {
-    font-weight: normal;
-    font-size: 1.8rem;
-    margin: 0;
-  }
-
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 18px;
-    width: 100%;
-  }
-
-  .product-tile {
-    background: var(--tile-bg);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .product-tile svg {
-    width: 42%;
-    height: 42%;
-    stroke: var(--accent);
-  }
-
-  .back-btn {
-    font-family: inherit;
-    font-size: 0.95rem;
-    background: none;
-    border: 1px solid var(--line);
-    color: var(--ink);
-    padding: 10px 20px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-  }
-
-  .back-btn:hover,
-  .back-btn:focus-visible {
-    border-color: var(--accent);
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -252,7 +16,7 @@
 
 <main>
 
-  <div class="view active" id="view-home" style="display: flex;">
+  <div class="view active" id="view-home">
     <div class="logo-mark" aria-hidden="true">
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M30 34 L30 26 A20 20 0 0 1 70 26 L70 34" stroke="#2c5f4f" stroke-width="4" stroke-linecap="round"/>
@@ -320,44 +84,32 @@
     <button class="back-btn" data-back="categories">← Back</button>
   </div>
 
+  <div class="view" id="view-contact">
+    <div class="detail-header"><h2>Contact</h2></div>
+    <p class="contact-note">Questions about an order or just want to say hi? Send a note below.</p>
+    <form class="contact-form" id="contactForm">
+      <div>
+        <label for="cName">Name</label>
+        <input type="text" id="cName" name="name" placeholder="Your name">
+      </div>
+      <div>
+        <label for="cEmail">Email</label>
+        <input type="email" id="cEmail" name="email" placeholder="you@example.com">
+      </div>
+      <div>
+        <label for="cMessage">Message</label>
+        <textarea id="cMessage" name="message" placeholder="How can we help?"></textarea>
+      </div>
+      <div class="contact-actions">
+        <button class="shop-btn" type="submit">Send message</button>
+        <button class="back-btn" type="button" data-back="home">← Back</button>
+      </div>
+    </form>
+  </div>
+
 </main>
 
-<script>
-  function showView(id) {
-    const next = document.getElementById('view-' + id);
-    const current = document.querySelector('.view.active');
-    if (current === next) return;
-
-    if (current) {
-      current.classList.remove('active');
-      current.classList.add('leaving');
-      setTimeout(() => {
-        current.classList.remove('leaving');
-        current.style.display = 'none';
-      }, 350);
-    }
-
-    next.style.display = 'flex';
-    // force layout so the transition actually plays
-    void next.offsetWidth;
-    requestAnimationFrame(() => {
-      next.classList.add('active');
-    });
-  }
-
-  document.getElementById('shopBtn').addEventListener('click', () => showView('categories'));
-  document.getElementById('navHome').addEventListener('click', (e) => { e.preventDefault(); showView('home'); });
-  document.getElementById('navShop').addEventListener('click', (e) => { e.preventDefault(); showView('categories'); });
-  document.getElementById('navContact').addEventListener('click', (e) => { e.preventDefault(); });
-
-  document.querySelectorAll('.cat-card').forEach(card => {
-    card.addEventListener('click', () => showView(card.getAttribute('data-target')));
-  });
-
-  document.querySelectorAll('.back-btn').forEach(btn => {
-    btn.addEventListener('click', () => showView(btn.getAttribute('data-back')));
-  });
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
