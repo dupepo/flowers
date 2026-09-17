@@ -1,269 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop</title>
+<style>
+  :root {
+    --bg: #fdfcf9;
+    --ink: #1f1c19;
+    --accent: #2c5f4f;
+    --accent-dark: #1e4237;
+    --line: #e4ded3;
+    --tile-bg: #f2efe7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a;
+      --ink: #f0ede6;
+      --accent: #6fbfa4;
+      --accent-dark: #8fd4bc;
+      --line: #33342f;
+      --tile-bg: #212320;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181a;
+    --ink: #f0ede6;
+    --accent: #6fbfa4;
+    --accent-dark: #8fd4bc;
+    --line: #33342f;
+    --tile-bg: #212320;
+  }
 
-    <title>Your Name | Portfolio</title>
+  * { box-sizing: border-box; }
 
-    <link rel="stylesheet" href="style.css">
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(24px, 6vw, 64px);
+    padding: 28px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  nav a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    position: relative;
+    padding-bottom: 4px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+
+  nav a:hover::after,
+  nav a:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+
+  .view {
+    display: none;
+    width: 100%;
+    max-width: 720px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 28px;
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .view.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .view.leaving {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .view {
+      transition: none;
+      transform: none;
+    }
+  }
+
+  .logo-mark {
+    width: 88px;
+    height: 88px;
+  }
+
+  .logo-mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .shop-btn {
+    font-family: inherit;
+    font-size: 1.15rem;
+    background: var(--accent);
+    color: #fdfcf9;
+    border: none;
+    padding: 18px 42px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .shop-btn:hover,
+  .shop-btn:focus-visible {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+  }
+
+  .shop-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .categories {
+    display: flex;
+    gap: clamp(16px, 4vw, 32px);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cat-card {
+    width: 160px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px 16px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .cat-card svg {
+    width: 48px;
+    height: 48px;
+    stroke: var(--accent);
+  }
+
+  .cat-card:hover,
+  .cat-card:focus-visible {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .cat-card span {
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .detail-header h2 {
+    font-weight: normal;
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 18px;
+    width: 100%;
+  }
+
+  .product-tile {
+    background: var(--tile-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-tile svg {
+    width: 42%;
+    height: 42%;
+    stroke: var(--accent);
+  }
+
+  .back-btn {
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .back-btn:hover,
+  .back-btn:focus-visible {
+    border-color: var(--accent);
+  }
+</style>
 </head>
-
 <body>
 
-    <!-- Navigation -->
-    <header>
-        <nav class="navbar">
-            <h2 class="logo">YourName.</h2>
-
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-
-        <div class="hero-text">
-            <p class="intro">HELLO, I'M</p>
-
-            <h1>Your Name</h1>
-
-            <h2>Cybersecurity Student & Developer</h2>
-
-            <p>
-                I build websites, applications and technical projects
-                while developing my skills in cybersecurity and software development.
-            </p>
-
-            <div class="hero-buttons">
-                <a href="#projects" class="btn">View My Work</a>
-                <a href="#contact" class="btn secondary">Contact Me</a>
-            </div>
-        </div>
-
-    </section>
-
-
-    <!-- About Section -->
-    <section id="about" class="section">
-
-        <h2 class="section-title">About Me</h2>
-
-        <div class="about-content">
-
-            <div class="about-text">
-                <p>
-                    I'm a university student interested in cybersecurity,
-                    software development and web development.
-                </p>
-
-                <p>
-                    I enjoy creating projects that allow me to learn new
-                    technologies and solve real-world problems.
-                </p>
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- Projects Section -->
-    <section id="projects" class="section projects-section">
-
-        <h2 class="section-title">My Projects</h2>
-
-        <p class="section-description">
-            Here are some of the projects I've worked on.
-        </p>
-
-        <div class="projects-grid">
-
-            <!-- Project 1 -->
-            <div class="project-card">
-
-                <div class="project-image">
-                    <span>PROJECT 01</span>
-                </div>
-
-                <div class="project-content">
-
-                    <h3>The Book Nook</h3>
-
-                    <p>
-                        A bookstore website created using HTML, CSS and JavaScript.
-                    </p>
-
-                    <div class="technologies">
-                        <span>HTML</span>
-                        <span>CSS</span>
-                        <span>JavaScript</span>
-                    </div>
-
-                    <a href="#" class="project-link">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Project 2 -->
-            <div class="project-card">
-
-                <div class="project-image">
-                    <span>PROJECT 02</span>
-                </div>
-
-                <div class="project-content">
-
-                    <h3>Cybersecurity Project</h3>
-
-                    <p>
-                        Add a description of your cybersecurity project here.
-                    </p>
-
-                    <div class="technologies">
-                        <span>Python</span>
-                        <span>Cybersecurity</span>
-                    </div>
-
-                    <a href="#" class="project-link">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Project 3 -->
-            <div class="project-card">
-
-                <div class="project-image">
-                    <span>PROJECT 03</span>
-                </div>
-
-                <div class="project-content">
-
-                    <h3>Python Application</h3>
-
-                    <p>
-                        Add a description of your Python project here.
-                    </p>
-
-                    <div class="technologies">
-                        <span>Python</span>
-                        <span>Programming</span>
-                    </div>
-
-                    <a href="#" class="project-link">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Project 4 -->
-            <div class="project-card">
-
-                <div class="project-image">
-                    <span>PROJECT 04</span>
-                </div>
-
-                <div class="project-content">
-
-                    <h3>Database Project</h3>
-
-                    <p>
-                        Add a description of your SQL/database project here.
-                    </p>
-
-                    <div class="technologies">
-                        <span>SQL</span>
-                        <span>MySQL</span>
-                    </div>
-
-                    <a href="#" class="project-link">
-                        View Project →
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- Skills Section -->
-    <section id="skills" class="section">
-
-        <h2 class="section-title">Skills</h2>
-
-        <div class="skills-container">
-
-            <div class="skill">Python</div>
-            <div class="skill">Java</div>
-            <div class="skill">C</div>
-            <div class="skill">HTML</div>
-            <div class="skill">CSS</div>
-            <div class="skill">JavaScript</div>
-            <div class="skill">SQL</div>
-            <div class="skill">MySQL</div>
-            <div class="skill">Git</div>
-            <div class="skill">GitHub</div>
-            <div class="skill">VS Code</div>
-
-        </div>
-
-    </section>
-
-
-    <!-- Contact Section -->
-    <section id="contact" class="section contact-section">
-
-        <h2 class="section-title">Let's Connect</h2>
-
-        <p>
-            Interested in working together or checking out my projects?
-        </p>
-
-        <div class="contact-links">
-
-            <a href="mailto:your@email.com">Email</a>
-
-            <a href="https://github.com/" target="_blank">
-                GitHub
-            </a>
-
-            <a href="https://linkedin.com/" target="_blank">
-                LinkedIn
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- Footer -->
-    <footer>
-        <p>© 2026 Your Name. Built with HTML, CSS & JavaScript.</p>
-    </footer>
-
-
-    <script src="script.js"></script>
+<nav>
+  <a href="#" id="navHome">Home</a>
+  <a href="#" id="navContact">Contact</a>
+  <a href="#" id="navShop">Shop</a>
+</nav>
+
+<main>
+
+  <div class="view active" id="view-home" style="display: flex;">
+    <div class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 34 L30 26 A20 20 0 0 1 70 26 L70 34" stroke="#2c5f4f" stroke-width="4" stroke-linecap="round"/>
+        <path d="M22 34 H78 L74 82 A6 6 0 0 1 68 88 H32 A6 6 0 0 1 26 82 Z" fill="#2c5f4f" opacity="0.08" stroke="#2c5f4f" stroke-width="4" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <button class="shop-btn" id="shopBtn" type="button">Click to shop</button>
+  </div>
+
+  <div class="view" id="view-categories">
+    <div class="categories">
+      <button class="cat-card" data-target="clothes">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 4 L4 7 L6 10 L8 8.5 V20 H16 V8.5 L18 10 L20 7 L16 4 A4 4 0 0 1 8 4 Z"/>
+        </svg>
+        <span>Clothes</span>
+      </button>
+      <button class="cat-card" data-target="shoes">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 18 V13 C6 13 7 10 9 10 C10.5 10 10.5 12 12.5 12 C15 12 15.5 9 18 9 C20 9 21 11 21 14 V18 Z"/>
+          <path d="M3 18 H21"/>
+        </svg>
+        <span>Shoes</span>
+      </button>
+      <button class="cat-card" data-target="accessories">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="9" width="16" height="11" rx="2"/>
+          <path d="M8 9 V6 A4 4 0 0 1 16 6 V9"/>
+        </svg>
+        <span>Accessories</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="view" id="view-clothes">
+    <div class="detail-header"><h2>Clothes</h2></div>
+    <div class="product-grid">
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M8 4 L4 7 L6 10 L8 8.5 V20 H16 V8.5 L18 10 L20 7 L16 4 A4 4 0 0 1 8 4 Z"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M8 4 L4 7 L6 10 L8 8.5 V20 H16 V8.5 L18 10 L20 7 L16 4 A4 4 0 0 1 8 4 Z"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M8 4 L4 7 L6 10 L8 8.5 V20 H16 V8.5 L18 10 L20 7 L16 4 A4 4 0 0 1 8 4 Z"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M8 4 L4 7 L6 10 L8 8.5 V20 H16 V8.5 L18 10 L20 7 L16 4 A4 4 0 0 1 8 4 Z"/></svg></div>
+    </div>
+    <button class="back-btn" data-back="categories">← Back</button>
+  </div>
+
+  <div class="view" id="view-shoes">
+    <div class="detail-header"><h2>Shoes</h2></div>
+    <div class="product-grid">
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M3 18 V13 C6 13 7 10 9 10 C10.5 10 10.5 12 12.5 12 C15 12 15.5 9 18 9 C20 9 21 11 21 14 V18 Z"/><path d="M3 18 H21"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M3 18 V13 C6 13 7 10 9 10 C10.5 10 10.5 12 12.5 12 C15 12 15.5 9 18 9 C20 9 21 11 21 14 V18 Z"/><path d="M3 18 H21"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M3 18 V13 C6 13 7 10 9 10 C10.5 10 10.5 12 12.5 12 C15 12 15.5 9 18 9 C20 9 21 11 21 14 V18 Z"/><path d="M3 18 H21"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><path d="M3 18 V13 C6 13 7 10 9 10 C10.5 10 10.5 12 12.5 12 C15 12 15.5 9 18 9 C20 9 21 11 21 14 V18 Z"/><path d="M3 18 H21"/></svg></div>
+    </div>
+    <button class="back-btn" data-back="categories">← Back</button>
+  </div>
+
+  <div class="view" id="view-accessories">
+    <div class="detail-header"><h2>Accessories</h2></div>
+    <div class="product-grid">
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9 V6 A4 4 0 0 1 16 6 V9"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9 V6 A4 4 0 0 1 16 6 V9"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9 V6 A4 4 0 0 1 16 6 V9"/></svg></div>
+      <div class="product-tile"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9 V6 A4 4 0 0 1 16 6 V9"/></svg></div>
+    </div>
+    <button class="back-btn" data-back="categories">← Back</button>
+  </div>
+
+</main>
+
+<script>
+  function showView(id) {
+    const next = document.getElementById('view-' + id);
+    const current = document.querySelector('.view.active');
+    if (current === next) return;
+
+    if (current) {
+      current.classList.remove('active');
+      current.classList.add('leaving');
+      setTimeout(() => {
+        current.classList.remove('leaving');
+        current.style.display = 'none';
+      }, 350);
+    }
+
+    next.style.display = 'flex';
+    // force layout so the transition actually plays
+    void next.offsetWidth;
+    requestAnimationFrame(() => {
+      next.classList.add('active');
+    });
+  }
+
+  document.getElementById('shopBtn').addEventListener('click', () => showView('categories'));
+  document.getElementById('navHome').addEventListener('click', (e) => { e.preventDefault(); showView('home'); });
+  document.getElementById('navShop').addEventListener('click', (e) => { e.preventDefault(); showView('categories'); });
+  document.getElementById('navContact').addEventListener('click', (e) => { e.preventDefault(); });
+
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', () => showView(card.getAttribute('data-target')));
+  });
+
+  document.querySelectorAll('.back-btn').forEach(btn => {
+    btn.addEventListener('click', () => showView(btn.getAttribute('data-back')));
+  });
+</script>
 
 </body>
 </html>
